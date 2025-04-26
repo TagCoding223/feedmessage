@@ -2,7 +2,6 @@ import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/models/User";
 import bcrypt from "bcryptjs";
 import { sendVerificationEmail } from "@/helpers/sendVerificationEmail";
-import { ApiResponse } from "@/types/ApiResponse";
 
 export async function POST(request: Request) {
     await dbConnect();
@@ -87,3 +86,32 @@ export async function POST(request: Request) {
         )
     }
 }
+
+/**
+ * Handles the POST request for user registration.
+ * 
+ * This function connects to the database, validates the user input, checks for
+ * existing users by username and email, hashes the password, and either updates
+ * an existing unverified user or creates a new user. It also sends a verification
+ * email to the user with a verification code.
+ * 
+ * @param {Request} request - The HTTP request object containing the user registration data.
+ * 
+ * @returns {Promise<Response>} A JSON response indicating the success or failure of the operation.
+ * 
+ * @throws {Error} If there is an issue during the registration process, such as database errors
+ * or email sending failures.
+ * 
+ * ### Workflow:
+ * 1. Connects to the database using `dbConnect`.
+ * 2. Parses the request body to extract `username`, `email`, and `password`.
+ * 3. Checks if a verified user with the same username exists:
+ *    - If yes, returns a 400 response with an error message.
+ * 4. Checks if a user with the same email exists:
+ *    - If the user is verified, returns a 400 response with an error message.
+ *    - If the user is unverified, updates the user's password, verification code, and expiry.
+ * 5. If no user exists with the email, creates a new user with the provided details.
+ * 6. Sends a verification email to the user:
+ *    - If email sending fails, returns a 500 response with an error message.
+ * 7. Returns a 201 response indicating successful registration and prompts the user to verify their email.
+ */
