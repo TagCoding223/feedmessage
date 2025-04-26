@@ -21,8 +21,8 @@ async function dbConnect() : Promise<void> { // here in typescript null means i 
     
     try {
         const db = await mongoose.connect(process.env.MONGODB_URI || "", {})
-        console.log("db : ",db);
-        console.log("db.connections : ",db.connections);
+        // console.log("db : ",db);
+        // console.log("db.connections : ",db.connections);
         connection.isConnected = db.connections[0].readyState;
         console.log("DB Connected Successfully.");
     } catch (error) {

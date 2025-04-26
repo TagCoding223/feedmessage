@@ -1,3 +1,21 @@
 // install commands
  npm install resend
   npm i bcryptjs
+
+
+// endpoints 
+// create user (signup)
+request,
+Method: POST
+URL: http://localhost:3000/api/sign-up
+body: {
+  "username": "one",
+  "email": "one@gmail.com",
+  "password": "one@123"
+}
+
+response: {
+  "success": true,
+  "message": "User registerd successfully. Please verfiy your email."
+}
+201 created
