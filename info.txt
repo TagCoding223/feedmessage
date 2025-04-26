@@ -19,3 +19,42 @@ response: {
   "message": "User registerd successfully. Please verfiy your email."
 }
 201 created
+
+// check-unique-username
+request,
+Method: Get
+URL: http://localhost:3000/api/check-username-unique?username=one
+
+response,
+{
+  "success": true,
+  "message": "Username is avaliable."
+}
+200 ok
+
+// verify code
+request,
+Method: Post
+URL: http://localhost:3000/api/verify-code
+body:{
+  "username": "vishal",
+  "code": "747775"
+}
+
+response,
+{
+  "success": true,
+  "message": "Account verify successfully."
+}
+
+// ai message response
+request,
+Method: Get
+URL: http://localhost:3000/api/suggest-messages
+
+response,
+{
+  "success": true,
+  "content": "What's a small act of kindness you've witnessed recently that brightened your day?||If you could instantly learn any skill, what would it be and why?||What's a piece of advice you would give to your younger self?\n"
+}
+200 ok
