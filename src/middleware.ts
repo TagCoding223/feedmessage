@@ -33,6 +33,7 @@ export async function middleware(request: NextRequest) {
     // Default redirect for unauthenticated users trying to access protected routes
     if (!token) {
         return NextResponse.redirect(new URL('/home', request.url));
+        // return NextResponse.next()
     }
 
     // if (!token && url.pathname.startsWith('dashboard')) {
