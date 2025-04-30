@@ -1,6 +1,90 @@
+import bcrypt from "bcryptjs";
 import NextAuth from "next-auth";
-import { authOptions } from "./options";
+import CredentialsProvider from "next-auth/providers/credentials";
 
-const handler = NextAuth(authOptions)
+const handler = NextAuth({
+    providers: [
+        CredentialsProvider({
 
-export {handler as GET, handler as POST}
+            name: 'Credentials',
+
+            credentials: {
+                email: { label: "Email", type: "email" },
+                password: { label: "Password", type: "password" }
+            },
+            async authorize(credentials, req) {
+
+                const email = req.body?.email
+                const password = req.body?.password
+                
+                const res = await fetch(`${process.env.BASE_URL}api/getUserByEmail`,{
+                    method: "POST",
+                    body: JSON.stringify({
+                        "email": email
+                    })
+                })
+
+                
+                const user = await res.json()
+                
+                console.log(user.user)
+                if(user.user===null){
+                    throw new Error("User not exist.")
+                }
+
+                if(user){
+                    const isPasswordCorrect = await bcrypt.compare(password, user.user?.password.toString());
+                    console.log(isPasswordCorrect)
+                    if (!isPasswordCorrect) {
+                        throw new Error("Incorrect Credentials.")
+                        // return Response.json({
+                        //     success: false,
+                        //     message: "Incorrect Credentials."
+                        // }, { status: 401 }) // 401 UNAUTHORIZED 
+
+                    }
+                }
+
+                if (res.ok && user) {
+                    return user.user
+                }else{
+                    // return Response.json({
+                    //     success: false,
+                    //     message: "User not found."
+                    // }, { status: 404 }) // 404 not found
+                    throw new Error("User not found.")
+                }
+            }
+        })
+
+    ],
+    session: {
+        strategy: "jwt"
+    },
+    // secret: process.env.NEXTAUTH_SECRET,
+    callbacks: {
+        async jwt({token,user}){
+            if(user){
+                console.log("In callback username: ",user.username)
+                token._id = user._id?.toString();
+                token.isVerified = user.isVerified;
+                token.isAcceptingMessages = user.isAcceptingMessages;
+                token.name = user.username;
+            }
+            console.log("Token : ",token)
+            return token
+        },
+        async session({session, token}){
+            if(token){
+                session.user._id = token._id?.toString();
+                session.user.isVerified = token.isVerified;
+                session.user.isAcceptingMessages = token.isAcceptingMessages;
+                session.user.name = token.name;
+            }
+            console.log("Session : ",session)
+            return session
+        }
+    }
+})
+
+export { handler as GET, handler as POST }

@@ -31,10 +31,10 @@ const MessageSchema: Schema<Message> = new Schema({ // Message interface give he
  * @extends Document - Mongoose document interface.
  */
 export interface User extends Document {
-    username: String;
-    email: String;
-    password: String;
-    verifyCode: String;
+    username: string;
+    email: string;
+    password: string;
+    verifyCode: string;
     verifyCodeExpiry: Date;
     isVerified: boolean;
     isAcceptingMessage: boolean;

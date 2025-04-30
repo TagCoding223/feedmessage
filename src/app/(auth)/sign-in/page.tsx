@@ -24,8 +24,7 @@ import { signIn } from "next-auth/react"
 const page = () => {
     
     const [isSubmitting, setIsSubmitting] = useState(false)
-    const [toastMessage, setToastMessage] = useState('')
-    const [toastDescription, setToastDescription] = useState('')
+    
     
     const router = useRouter()
 
@@ -34,21 +33,30 @@ const page = () => {
     const form = useForm<z.infer<typeof signInSchema>>({
         resolver: zodResolver(signInSchema),
         defaultValues: {
-            password: '',
-            identifier: ''
+            identifier: '',
+            password: ''
         }
     })
 
     const onSubmit = async (data: z.infer<typeof signInSchema>) => {
         setIsSubmitting(true)
+        console.log(data)
+        // for debugging visit the below urls;
+        // http://localhost:3000/api/auth/signin // defualt nextauth sign in page
+        // http://localhost:3000/api/auth/callback/credentials // nextauth signin handler
         const response = await signIn('credentials',{
           redirect: false,
-          identifier: data.identifier,
+          email: data.identifier,
           password: data.password
         })
         if (response?.error) {
-          setToastMessage("Login fail.")
-          setToastDescription("Incorrect username or password.")
+            console.log(response?.error)
+            console.log(response.error.toString())
+        //   setToastMessage("Login fail.")
+        //   setToastDescription("Incorrect username or password.")
+            // toast.error("Login fail.",{description: "Incorrect username or password."})
+            toast.error("Login fail.",{description: response?.error.toString()})
+
         }
 
         if (response?.url) {
@@ -70,12 +78,12 @@ const page = () => {
 
                         
 
-                        {/* identifier */}
+                        {/* email */}
                         <FormField control={form.control} name="identifier" render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Email/Username</FormLabel>
+                                <FormLabel>Email</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="email/username" {...field} />
+                                    <Input placeholder="email" {...field} name="identifier"/>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -86,7 +94,7 @@ const page = () => {
                             <FormItem>
                                 <FormLabel>Password</FormLabel>
                                 <FormControl>
-                                    <Input type="password" placeholder="password" {...field} />
+                                    <Input type="password" placeholder="password" {...field} name="identifier"/>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -105,8 +113,8 @@ const page = () => {
                 </Form>
 
                 <div className="text-center mt-4">
-                    <p>Want to create a new Account{' '}
-                        <Link href="/sign-in" className="text-blue-600 hover:text-blue-800">Sign op</Link>
+                    <p>Want to create a new Account?{' '}
+                        <Link href="/sign-up" className="text-blue-600 hover:text-blue-800">Sign up</Link>
                     </p>
                 </div>
             </div>

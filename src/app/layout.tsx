@@ -34,6 +34,7 @@ export default function RootLayout({
           <Navbar />
           {children}
           <Toaster />
+          <footer className="text-center p-4 md:p-6">@ 2025 Feed Message. All rights reserved.</footer>
         </body>
       </AuthProvider>
     </html>
