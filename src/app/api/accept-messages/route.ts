@@ -6,7 +6,10 @@ import { User } from "next-auth";
 export async function POST(request: Request) {
     await dbConnect()
 
-    // console.log("Req: ",request) 
+    console.log("Message Accept Post call.")
+
+    const body =await request.json()
+    // console.log("Req: ",body) 
     const session = await getSession({ req: { headers: Object.fromEntries(request.headers) } }); // request document hold headers section with cookiw and this cookie hold all client side tokens like next-auth.csrf-token, next-auth.csrf-url, and next-auth.session-token that hold several information(doesn't need to pass session explicitly in reqest body from clent side), this statement extract information from session
 
     // console.log("Special queen : ", session)
@@ -22,27 +25,33 @@ export async function POST(request: Request) {
 
     const userId = user._id
 
-    const { acceptMessages } = await request.json()
+    const  acceptMessages  = body.acceptMessages
+
+    // console.log("Acceptmessage from client: ",acceptMessages)
 
     try {
         const updatedUser = await UserModel.findByIdAndUpdate(
             userId,
-            { isAcceptingMessage: acceptMessages },
+            { isAcceptingMessages: acceptMessages },
             { new: true }
         )
+
+        console.log("Updated User: ",updatedUser)
 
         if (!updatedUser) {
             return Response.json({
                 success: false,
-                message: "Failed o update user status to accept message."
+                message: "Failed to update user status to accept message."
             }, { status: 401 })
             // throw new Error("Failed to update user status to accept message.")
         }
 
+        
+        // session.user.isAcceptingMessages = updatedUser.isAcceptingMessages this is not work first need to chnage in token
         return Response.json({
             success: true,
             message: "Message acceptance status updated successfully.",
-            updatedUser
+            isAcceptingMessages: updatedUser.isAcceptingMessages
         }, { status: 200 })
     } catch (error) {
         console.log("Failed to update user status to accept messages: ", error)
@@ -80,6 +89,8 @@ export async function GET(request: Request) {
             }, { status: 404 }
             )
         }
+
+        console.log("User: ",foundUser)
 
         return Response.json({
             success: true,

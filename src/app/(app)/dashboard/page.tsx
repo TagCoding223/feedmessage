@@ -33,15 +33,14 @@ function dashboard() {
     const acceptMessages = watch('acceptMessage')
 
     // Get status of isAcceptingMessage field from db
-    const fetchAcceptMessage = useCallback(async () => {
+    const fetchStatusOfAcceptMessage = useCallback(async () => {
         setIsSwitchLoading(true)
         console.debug("Accept Messages: ", acceptMessages)
         try {
             const response = await axios.get<ApiResponse>('/api/accept-messages')
             
-            console.log(response)
+            // console.log(response)
             if (response.status) {
-                console.log("here: ",response.data.isAcceptingMessages)
                 setValue("acceptMessage",response.data.isAcceptingMessages || false)
             }
  
@@ -59,26 +58,48 @@ function dashboard() {
 
     // toggle isAcceptingMessage field in db
     // handle switch button change
-    // const handleSwitchChange = async () => {
-    //     try {
-    //         const response = await axios.post<ApiResponse>('/api/accept-messages', {
-    //             acceptMessages: !acceptMessages
-    //         })
+    const updateStatusOfAcceptMessage = async () => {
 
-    //         setValue('acceptMessage', !acceptMessages)
+        // console.log("I'm here special")
+        // console.log(acceptMessages)
+        try {
+            const response = await axios.post<ApiResponse>('/api/accept-messages', {
+                acceptMessages: !acceptMessages
+            })
 
-    //         toast.info(response.data.message)
-    //     } catch (error) {
-    //         const axiosError = error as AxiosError<ApiResponse>
-    //         toast.warning("Error", { description: axiosError.response?.data.message || "Failed to fetch message settings." })
-    //     }
-    // }
+            // for debugging
+            {
+            // const response = await fetch('/api/accept-messages', {
+            //     method: "POST",
+            //     body: JSON.stringify({
+            //         "acceptMessages": !acceptMessages
+            //     })
+            // })
+            // const currentStatus = await response.json()
+            // console.log("Updated User unique : ",currentStatus)
+            // setValue('acceptMessage', currentStatus.isAcceptingMessages)
+            // toast.info("Field Updated",{description: currentStatus.message})
+            }
+
+            if(response){
+                // console.log("Updated User unique : ",response.data)
+                setValue('acceptMessage', response.data.isAcceptingMessages || false)
+                toast.info("Field Updated",{description: response.data.message})
+            }else{
+                toast.warning("Field Updated Fail.",{description: "Fail to update accept message status."})
+            }
+
+        } catch (error) {
+            const axiosError = error as AxiosError<ApiResponse>
+            toast.warning("Error", { description: axiosError.response?.data.message || "Failed to Update Field to Accept Messages." })
+        }
+    }
 
     useEffect(() => {
         if (!session || !session.user) { return }
         // fetchMessages()
-        fetchAcceptMessage()
-    }, [session, setValue, fetchAcceptMessage])
+        fetchStatusOfAcceptMessage()
+    }, [session, setValue, fetchStatusOfAcceptMessage])
 
     if (!session || !session.user) {
         return <div>Please login</div>
@@ -97,7 +118,8 @@ function dashboard() {
                 <div className="mb-4">
                     <Switch {...register('acceptMessage')}
                         checked={acceptMessages}
-                        // onCheckedChange={handleSwitchChange}
+                        onClick={updateStatusOfAcceptMessage}
+                        // onCheckedChange={updateStatusOfAcceptMessage}
                         disabled={isSwitchLoading} />
                     <span className="ml-2">
                         Accept Messages: {acceptMessages ? 'On' : 'Off'}
@@ -110,7 +132,7 @@ function dashboard() {
                     variant="outline"
                     onClick={(e) => {
                         e.preventDefault();
-                        fetchAcceptMessage();
+                        fetchStatusOfAcceptMessage();
                     }}
                 >
                     {

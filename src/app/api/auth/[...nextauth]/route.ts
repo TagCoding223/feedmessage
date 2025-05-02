@@ -81,7 +81,7 @@ const handler = NextAuth({
                 session.user.isAcceptingMessages = token.isAcceptingMessages;
                 session.user.name = token.name;
             }
-            // console.log("Session : ",session)
+            console.log("Session : ",session)
             return session
         }
     }
