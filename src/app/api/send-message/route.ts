@@ -18,14 +18,14 @@ export async function POST(request: Request){
         }
 
         // is user accepting the messages
-        if (!user.isAcceptingMessage) {
+        if (!user.isAcceptingMessages) {
             return Response.json({
                 success: false,
                 message: "User is not accepting messages."
             },{status: 403})
         }
 
-        const newMessage = {content, createdAt: new Date()}
+        const newMessage = {content: content, createdAt: new Date()}
         user.messages.push(newMessage as Message) // push a new message with giving sureity that we pass object of message type
         await user.save()
 
@@ -34,7 +34,7 @@ export async function POST(request: Request){
             message: "Message send successfully."
         },{status: 200})
     } catch (error) {
-        console.error("Error adding messages: ",error);
+        console.log("Error adding messages: ",error);
         return Response.json({
             success: false,
             message: "Error adding messages by internal server error."

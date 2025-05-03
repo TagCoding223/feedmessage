@@ -1,3 +1,4 @@
+import UserModel from "@/models/User";
 import bcrypt from "bcryptjs";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -16,23 +17,23 @@ const handler = NextAuth({
 
                 const email = req.body?.email
                 const password = req.body?.password
-                
-                const res = await fetch(`${process.env.BASE_URL}api/getUserByEmail`,{
+
+                const res = await fetch(`${process.env.BASE_URL}api/getUserByEmail`, {
                     method: "POST",
                     body: JSON.stringify({
                         "email": email
                     })
                 })
 
-                
+
                 const user = await res.json()
-                
+
                 console.log(user.user)
-                if(user.user===null){
+                if (user.user === null) {
                     throw new Error("User not exist.")
                 }
 
-                if(user){
+                if (user) {
                     const isPasswordCorrect = await bcrypt.compare(password, user.user?.password.toString());
                     console.log(isPasswordCorrect)
                     if (!isPasswordCorrect) {
@@ -47,7 +48,7 @@ const handler = NextAuth({
 
                 if (res.ok && user) {
                     return user.user
-                }else{
+                } else {
                     // return Response.json({
                     //     success: false,
                     //     message: "User not found."
@@ -63,9 +64,9 @@ const handler = NextAuth({
     },
     // secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
-        async jwt({token,user}){
-            if(user){
-                console.log("In callback username: ",user.username)
+        async jwt({ token, user }) {
+            if (user) {
+                console.log("In callback username: ", user.username)
                 token._id = user._id?.toString();
                 token.isVerified = user.isVerified;
                 token.isAcceptingMessages = user.isAcceptingMessages;
@@ -74,14 +75,25 @@ const handler = NextAuth({
             // console.log("Token : ",token)
             return token
         },
-        async session({session, token}){
-            if(token){
-                session.user._id = token._id?.toString();
-                session.user.isVerified = token.isVerified;
-                session.user.isAcceptingMessages = token.isAcceptingMessages;
-                session.user.name = token.name;
+        async session({ session, token }) {
+            if (token) {
+                // Fetch the latest user data from the database
+                // const user = await UserModel.findById(token._id);
+
+                // if (user) {
+                //     session.user._id = token._id?.toString();
+                //     session.user.isVerified = user?.isVerified;
+                //     session.user.isAcceptingMessages = user?.isAcceptingMessages; // Dynamically fetch this field
+                //     session.user.username = user?.username;
+                // } else {
+                    session.user._id = token._id?.toString();
+                    session.user.isVerified = token.isVerified;
+                    session.user.isAcceptingMessages = token.isAcceptingMessages;
+                    session.user.name = token.name;
+                // }
+
             }
-            console.log("Session : ",session)
+            // console.log("Session : ", session)
             return session
         }
     }

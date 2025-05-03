@@ -47,7 +47,7 @@ export async function POST(request: Request) {
         }
 
         
-        // session.user.isAcceptingMessages = updatedUser.isAcceptingMessages this is not work first need to chnage in token
+        // session.user.isAcceptingMessages = updatedUser.isAcceptingMessages this is not work first need to chnage in token ans second thing to remember the session is avaliable on client side than we need to update session at client side
         return Response.json({
             success: true,
             message: "Message acceptance status updated successfully.",
