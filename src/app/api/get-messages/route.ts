@@ -25,11 +25,13 @@ export async function GET(request:Request){
     
     try {
         const messages = await UserModel.aggregate([
-            {$match: {id: userId}},
+            {$match: {_id: userId}},
             {$unwind: '$messages'},
             {$sort: {'messages.createdAt': -1}},
             {$group: {_id: '$_id', messages: {$push: '$messages'}}}
         ])
+
+        console.log("Messages: ",messages)
 
         if (!messages || messages.length===0) {
             return Response.json({
