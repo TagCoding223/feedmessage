@@ -1,36 +1,171 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FeedMessage
 
-## Getting Started
+FeedMessage is an anonymous social messaging platform where users can send and receive messages while keeping their identity private. This project is built using modern web technologies and provides a seamless user experience.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Anonymous Messaging**: Send and receive messages without revealing your identity.
+- **User Authentication**: Secure sign-up and sign-in using NextAuth.js.
+- **Message Management**: View, delete, and manage messages in a user-friendly dashboard.
+- **Customizable Settings**: Toggle message acceptance status.
+- **Responsive Design**: Fully responsive UI for all devices.
+
+## Tech Stack
+
+- **Frontend**: React, Next.js, Tailwind CSS
+- **Backend**: Node.js, MongoDB
+- **Authentication**: NextAuth.js
+- **Email Service**: Resend API
+- **Validation**: Zod
+
+## Folder Structure
+
+```
+feedmessage/
+├── src/
+│   ├── app/                                # Next.js app directory
+│   │   ├── (auth)/                         # Authentication-related pages
+│   │   │   ├── sign-in/                    # Sign-in page
+│   │   │   ├── sign-up/                    # Sign-up page
+│   │   │   └── verify/                     # Verification pages
+│   │   │       └── [username]/             # Dynamic username verification page
+│   │   ├── (app)/                          # Main application pages
+│   │   │   ├── page.tsx                    # Main page
+│   │   │   └── dashboard/                  # Dashboard pages
+│   │   │       └── page.tsx                # Dashboard main page
+│   │   ├── api/                            # API routes
+│   │   │   ├── accept-messages/            # Accept messages API
+│   │   │   ├── auth/                       # Authentication API
+│   │   │   │   └── [...nextauth]/          # NextAuth.js dynamic route
+│   │   │   ├── check-username-unique/      # Check username uniqueness API
+│   │   │   ├── delete-message/             # Delete message API
+│   │   │   │   └── [messageId]/            # Dynamic message ID route
+│   │   │   ├── get-messages/               # Get messages API
+│   │   │   ├── getUserByEmail/             # Get user by email API
+│   │   │   ├── resend-otp/                 # Resend OTP API
+│   │   │   │   └── [username]/             # Dynamic username route
+│   │   │   ├── send-message/               # Send message API
+│   │   │   ├── sign-up/                    # Sign-up API
+│   │   │   ├── suggest-messages/           # Suggest messages API
+│   │   │   └── verify-code/                # Verify code API
+│   ├── components/                         # Reusable UI components
+│   ├── context/                            # Context providers
+│   ├── data/                               # Static data files
+│   ├── helpers/                            # Helper functions
+│   ├── lib/                                # Library utilities
+│   ├── models/                             # Mongoose models
+│   ├── schemas/                            # Zod validation schemas
+│   ├── types/                              # TypeScript types
+│   └── emails/                             # Email templates
+├── public/                                 # Public assets
+├── package.json                            # Project dependencies
+├── tsconfig.json                           # TypeScript configuration
+├── next.config.js                          # Next.js configuration
+└── README.md                               # Project documentation
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/feedmessage.git
+   cd feedmessage
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-## Learn More
+3. Set up environment variables:
+   Create a `.env` file in the root directory and add the following:
+   ```env
+   MONGODB_URI=your_mongodb_connection_string
+   NEXTAUTH_SECRET=your_nextauth_secret
+   RESEND_API_KEY=your_resend_api_key
+   GEMINI_API_KEY=your_google_genai_api_key
+   BASE_URL=http://localhost:3000
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+4. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+5. Open your browser and navigate to:
+   ```
+   http://localhost:3000
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Scripts
 
-## Deploy on Vercel
+- `npm run dev`: Start the development server.
+- `npm run build`: Build the application for production.
+- `npm start`: Start the production server.
+- `npm run lint`: Run ESLint to check for code quality issues.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## API Endpoints
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Authentication
+- `POST /api/sign-up`: Sign up a new user.
+- `POST /api/auth/signin`: Sign in an existing user.
+- `POST /api/verify-code`: Verify user account.
+
+### Messages
+- `GET /api/get-messages`: Fetch user messages.
+- `POST /api/send-message`: Send a new message.
+- `DELETE /api/delete-message/:id`: Delete a message.
+
+### Settings
+- `GET /api/accept-messages`: Get message acceptance status.
+- `POST /api/accept-messages`: Update message acceptance status.
+
+## Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository.
+2. Create a new branch:
+   ```bash
+   git checkout -b feature-name
+   ```
+3. Commit your changes:
+   ```bash
+   git commit -m "Add new feature"
+   ```
+4. Push to the branch:
+   ```bash
+   git push origin feature-name
+   ```
+5. Open a pull request.
+
+## Acknowledgments
+
+- [Next.js](https://nextjs.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [MongoDB](https://www.mongodb.com/)
+- [NextAuth.js](https://next-auth.js.org/)
+- [Resend API](https://resend.com/)
+- [Google GenAI](https://cloud.google.com/genai)
+
+---
+
+## Improvement
+
+1. Ensure user confirms email explicitly when trying to resend OTP. Update the backend to handle this scenario.
+
+2. Improve the signup process by suggesting unique names and usernames for users.
+
+3. Add more required fields to the signup form, such as phone number, date of birth, and profile picture upload.
+
+4. Implement rate limiting for OTP resend requests to prevent abuse.
+
+5. Enhance the dashboard to display user statistics, such as the number of messages sent and received.
+
+6. Add a feature to allow users to block or report abusive messages.
+
+7. Improve the email templates for better branding and user engagement.
+
+---
+
+Feel free to reach out if you have any questions or suggestions!

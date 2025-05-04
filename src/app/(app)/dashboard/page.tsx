@@ -97,10 +97,11 @@ export default function Dashboard() {
                 // console.log("Previous session: ", session)
                 // await update({...session,isAcceptingMessages: response.data.isAcceptingMessages})
                 // if (session) {
-                //     await update({ ...session, user: { ...session.user, isAcceptingMessages: response.data.isAcceptingMessages } });
+                    // await update()
+                    // await update({ ...session, user: { ...session.user, isAcceptingMessages: response.data.isAcceptingMessages } });
                 // }
                 // const updatedSession = await getSession() // now i get updated session
-                // console.log("Updated session: ", updatedSession)
+                // console.log("Updated session: ", session)
             } else {
                 toast.warning("Field Updated Fail.", { description: "Fail to update accept message status." })
             }
