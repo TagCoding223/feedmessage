@@ -1,6 +1,6 @@
 # FeedMessage
 
-FeedMessage is an anonymous social messaging platform where users can send and receive messages while keeping their identity private. This project is built using modern web technologies and provides a seamless user experience.
+FeedMessage is an anonymous social messaging platform that allows users to send and receive messages while keeping their identity private. Built with modern web technologies like Next.js, Tailwind CSS, and MongoDB, it offers a secure and user-friendly experience. Key features include anonymous messaging, user authentication with NextAuth.js, customizable settings, and responsive design. The platform also integrates with services like Resend API for email notifications and Google GenAI for AI-powered message suggestions. This project is built using modern web technologies and provides a seamless user experience.
 
 ## Features
 
@@ -9,14 +9,20 @@ FeedMessage is an anonymous social messaging platform where users can send and r
 - **Message Management**: View, delete, and manage messages in a user-friendly dashboard.
 - **Customizable Settings**: Toggle message acceptance status.
 - **Responsive Design**: Fully responsive UI for all devices.
+- **AI-Powered Suggestions**: Leverage Google GenAI to provide intelligent message suggestions for users.
 
 ## Tech Stack
 
-- **Frontend**: React, Next.js, Tailwind CSS
-- **Backend**: Node.js, MongoDB
-- **Authentication**: NextAuth.js
+- **FullStack Framework**: Next.js
+- **Frontend**: React, Tailwind CSS
+- **Backend**: Node.js
+- **Authentication**: NextAuth.js with JSON Web Tokens (JWT)
 - **Email Service**: Resend API
 - **Validation**: Zod
+- **Package Manager**: npm
+- **Version Control**: Git
+- **Database**: MongoDB (or any other supported database)
+
 
 ## Folder Structure
 
