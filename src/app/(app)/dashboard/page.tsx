@@ -111,6 +111,10 @@ export default function Dashboard() {
         }
     }
 
+    const deleteMessage = (messageId:string)=>{
+        setMessages((prevMessages) => prevMessages.filter((message) => message._id !== messageId));
+    }
+
     let profileUrl = '';
     if (typeof window !== "undefined") {
         profileUrl = `${window.location.protocol}//${window.location.host}/u/${session?.user.name}`
@@ -173,7 +177,7 @@ export default function Dashboard() {
             <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
                 {messages.length > 0 ? (
                     messages.map((message) => (
-                        <MessageCard key={message._id as string} message={message} onMessageDelete={() => {}} />
+                        <MessageCard key={message._id as string} message={message} onMessageDelete={() => deleteMessage(message._id)} />
                     ))
                 ) : (
                     <p>No messages to display.</p>

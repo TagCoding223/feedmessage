@@ -33,7 +33,7 @@ export async function DELETE(request:Request, {params}: {params:{messageId:strin
         return Response.json({
             success: true,
             message: "Message Deleted."
-        },{status: 404})
+        },{status: 200})
     } catch (error) {
         console.error("Error occur in delete a message: ",error);
         return Response.json({

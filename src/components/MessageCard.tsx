@@ -30,12 +30,16 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
 
   const handleDeleteConfirm = async () => {
     try {
-      const response = await axios.delete<ApiResponse>(
-        `/api/delete-message/${message._id}`
-      );
-      toast.info("Info",{ description: response.data.message});
-      onMessageDelete(message._id.toString());
+      // Call the backend API to delete the message
+      const response = await axios.delete<ApiResponse>(`/api/delete-message/${message._id}`);
 
+      if (response.data.success) {
+          // Update the `messages` state to remove the deleted message
+          toast.success("Message deleted successfully.");
+          onMessageDelete(message._id.toString());
+      } else {
+          toast.warning("Failed to delete the message.");
+      }
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
       toast.warning("Error",{description: axiosError.response?.data.message ?? 'Failed to delete message'});
