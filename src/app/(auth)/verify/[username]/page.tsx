@@ -9,9 +9,9 @@ import axios, { AxiosError } from 'axios'
 import { useParams, useRouter } from 'next/navigation'
 import React, {useState} from 'react'
 import { useForm } from 'react-hook-form'
-import { useSonner } from 'sonner'
 import * as z from 'zod'
 
+// TODO: MAKE IMPROVEMENT
 function VerifyAccount() {
     const router = useRouter()
     const params = useParams<{ username: string }>()
@@ -38,7 +38,7 @@ function VerifyAccount() {
             console.error("Error in verify code: ", error);
             const axiosError = error as AxiosError<ApiResponse>
             setToastMessage("Verification failed!")
-            setToastDescription(axiosError.response?.data.message)
+            setToastDescription(axiosError.response?.data.message || "")
         }
     }
 

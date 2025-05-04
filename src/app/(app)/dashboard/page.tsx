@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 "use client"
 
 import {MessageCard} from "@/components/MessageCard"
@@ -11,17 +10,17 @@ import { ApiResponse } from "@/types/ApiResponse"
 import { zodResolver } from "@hookform/resolvers/zod"
 import axios, { AxiosError } from "axios"
 import { Loader2, RefreshCcw } from "lucide-react"
-import { getSession, useSession } from "next-auth/react"
+import { useSession } from "next-auth/react"
 import { useCallback, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
-function dashboard() {
+export default function Dashboard() {
     const [isLoading, setIsLoading] = useState(false)
     const [isSwitchLoading, setIsSwitchLoading] = useState(false)
     const [messages, setMessages] = useState<Message[]>([])
 
-    const { data: session, update } = useSession()
+    const { data: session} = useSession()
 
     const form = useForm({
         resolver: zodResolver(acceptMessageSchema)
@@ -163,7 +162,7 @@ function dashboard() {
 
             <div className="mb-4">
                 <Switch {...register('acceptMessage')}
-                    checked={acceptMessages}
+                    checked={acceptMessages ?? false} // Ensure `acceptMessages` is always a boolean (help to handler "Switch is changing from uncontrolled to controlled.")
                     onClick={updateStatusOfAcceptMessage}
                     // onCheckedChange={updateStatusOfAcceptMessage}
                     disabled={isSwitchLoading} />
@@ -208,5 +207,3 @@ function dashboard() {
         </div>
     );
 }
-
-export default dashboard

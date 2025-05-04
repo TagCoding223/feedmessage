@@ -25,15 +25,22 @@ const handler = NextAuth({
                     })
                 })
 
+                //TODO: ALSO CHECK USER IS VERIFY OR NOT
 
                 const user = await res.json()
 
                 console.log(user.user)
                 if (user.user === null) {
                     throw new Error("User not exist.")
+                    // return Response.json({
+                    //         success: false,
+                    //         message: "User not exist."
+                    //     }, { status: 404 })
                 }
 
                 if (user) {
+
+
                     const isPasswordCorrect = await bcrypt.compare(password, user.user?.password.toString());
                     console.log(isPasswordCorrect)
                     if (!isPasswordCorrect) {
@@ -43,6 +50,16 @@ const handler = NextAuth({
                         //     message: "Incorrect Credentials."
                         // }, { status: 401 }) // 401 UNAUTHORIZED 
 
+                    }
+
+                    
+                    if (!user.user?.isVerified) {
+                        // console.log("Verify username: ",user.user?.username)
+                        throw new Error(`User not verified.||${user.user?.username}`)
+                        // return Response.json({
+                        //         success: false,
+                        //         message: "User not verified."
+                        //     }, { status: 401 }) // 404 not found
                     }
                 }
 
@@ -86,10 +103,10 @@ const handler = NextAuth({
                 //     session.user.isAcceptingMessages = user?.isAcceptingMessages; // Dynamically fetch this field
                 //     session.user.username = user?.username;
                 // } else {
-                    session.user._id = token._id?.toString();
-                    session.user.isVerified = token.isVerified;
-                    session.user.isAcceptingMessages = token.isAcceptingMessages;
-                    session.user.name = token.name;
+                session.user._id = token._id?.toString();
+                session.user.isVerified = token.isVerified;
+                session.user.isAcceptingMessages = token.isAcceptingMessages;
+                session.user.name = token.name;
                 // }
 
             }

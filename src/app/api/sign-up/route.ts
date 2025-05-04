@@ -116,3 +116,5 @@ export async function POST(request: Request) {
  *    - If email sending fails, returns a 500 response with an error message.
  * 7. Returns a 201 response indicating successful registration and prompts the user to verify their email.
  */
+
+// dba is responsible to make a function on db that directly run without any interaction to delete those users they are not verified and older than 1month, 3month , 6month or 1 year.

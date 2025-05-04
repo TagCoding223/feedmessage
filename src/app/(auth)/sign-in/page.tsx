@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-no-undef */
-/* eslint-disable react-hooks/rules-of-hooks */
 'use client'
 import { zodResolver } from "@hookform/resolvers/zod"
 import Link from "next/link"
@@ -21,11 +19,11 @@ import { signIn } from "next-auth/react"
 
 
 
-const page = () => {
-    
+const Page = () => {
+
     const [isSubmitting, setIsSubmitting] = useState(false)
-    
-    
+
+
     const router = useRouter()
 
     // zod implementation
@@ -38,26 +36,52 @@ const page = () => {
         }
     })
 
+    const delay = (ms) =>new Promise(res => setTimeout(res,ms))
+
     const onSubmit = async (data: z.infer<typeof signInSchema>) => {
         setIsSubmitting(true)
         console.log(data)
+
+
         // for debugging visit the below urls;
         // http://localhost:3000/api/auth/signin // defualt nextauth sign in page
         // http://localhost:3000/api/auth/callback/credentials // nextauth signin handler
-        const response = await signIn('credentials',{
-          redirect: false,
-          email: data.identifier,
-          password: data.password
+        const response = await signIn('credentials', {
+            redirect: false,
+            email: data.identifier,
+            password: data.password
         })
-        if (response?.error) {
-            console.log(response?.error)
-            console.log(response.error.toString())
-        //   setToastMessage("Login fail.")
-        //   setToastDescription("Incorrect username or password.")
-            // toast.error("Login fail.",{description: "Incorrect username or password."})
-            toast.error("Login fail.",{description: response?.error.toString()})
 
+
+        if (response?.error) {
+            // console.log(response?.error)
+            // console.log(response.error.toString())
+            //   setToastMessage("Login fail.")
+            //   setToastDescription("Incorrect username or password.")
+            // toast.error("Login fail.",{description: "Incorrect username or password."})
+            
+
+            if(response?.error.toString().slice(0,18) === "User not verified."){
+                const username = await response?.error.toString().slice(20,)
+                toast.error("Login fail.", { description: "User not verified. Please wait a mintue we redirect you on verification page..." })
+                try {
+                    setTimeout(()=>{
+                        router.replace(`/verify/${username}`)
+                        // console.log(`/verify/${username}`)
+                    },5000)
+
+                    // another way
+                    // await delay(5000);
+                    // router.replace(`/verify/${username}`)
+                } catch (error) {
+                    console.log("Error comes from sign-in page: ",error)
+                }
+            }else{
+                toast.error("Login fail.", { description: response?.error.toString() })
+            }
         }
+
+
 
         if (response?.url) {
           router.replace("/dashboard")
@@ -76,14 +100,14 @@ const page = () => {
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
 
-                        
+
 
                         {/* email */}
                         <FormField control={form.control} name="identifier" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Email</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="email" {...field} name="identifier"/>
+                                    <Input placeholder="email" {...field} name="identifier" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -94,7 +118,7 @@ const page = () => {
                             <FormItem>
                                 <FormLabel>Password</FormLabel>
                                 <FormControl>
-                                    <Input type="password" placeholder="password" {...field} name="identifier"/>
+                                    <Input type="password" placeholder="password" {...field} name="identifier" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -122,31 +146,4 @@ const page = () => {
     )
 }
 
-export default page
-
-
-
-
-
-
-
-// import { useSession, signIn, signOut } from "next-auth/react"
-// import React from "react"
-
-// export default function Component() {
-//   const { data: session } = useSession()
-//   if (session) {
-//     return (
-//       <>
-//         Signed in as {session.user.email} <br />
-//         <button onClick={() => signOut()}>Sign out</button>
-//       </>
-//     )
-//   }
-//   return (
-//     <>
-//       Not signed in <br />
-//       <button className="bg-orange-500 px-3 py-1 m-4 rounded" onClick={() => signIn()}>Sign in</button>
-//     </>
-//   )
-// }
+export default Page
