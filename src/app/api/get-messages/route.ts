@@ -37,7 +37,7 @@ export async function GET(request:Request){
             return Response.json({
                 success: false,
                 message: "Message not found."
-            },{status: 401})
+            },{status: 404})
         }
 
         return Response.json({
