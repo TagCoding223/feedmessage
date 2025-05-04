@@ -10,6 +10,9 @@ import { useParams, useRouter } from 'next/navigation'
 import React, {useState} from 'react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
+import { useCountdown } from 'usehooks-ts'
+import { sendVerificationEmail } from '@/helpers/sendVerificationEmail'
+import { toast } from 'sonner'
 
 // TODO: MAKE IMPROVEMENT
 function VerifyAccount() {
@@ -17,11 +20,24 @@ function VerifyAccount() {
     const params = useParams<{ username: string }>()
     const [toastMessage, setToastMessage] = useState('')
     const [toastDescription, setToastDescription] = useState('')
+    const [countingBegin, setCountingBegin] = useState(false)
+    const [remainTime,setRemainTime] = useState('')
+    const [intervalValue, setIntervalValue] = useState<number>(1000) // use to change count value after each 1sec
+    const sec = 9;
+    const [count, { startCountdown, stopCountdown, resetCountdown }] =
+    useCountdown({
+      countStart: sec*10,
+      intervalMs: intervalValue,
+    })
+
+
 
     // zod implementation
-
     const form = useForm<z.infer<typeof verifySchema>>({
         resolver: zodResolver(verifySchema),
+        defaultValues:{
+            code: ""
+        }
     })
 
     const onSubmit = async (data: z.infer<typeof verifySchema>) => {
@@ -31,14 +47,40 @@ function VerifyAccount() {
                 code: data.code
             })
 
-            setToastMessage("Success")
-            setToastDescription(response.data.message)
-            router.replace('sign-in')
+            toast.success("Success",{description: response.data.message})
+            router.push('/sign-in')
         } catch (error) {
             console.error("Error in verify code: ", error);
             const axiosError = error as AxiosError<ApiResponse>
             setToastMessage("Verification failed!")
-            setToastDescription(axiosError.response?.data.message || "")
+            toast.warning("Verification failed!", {description: axiosError.response?.data.message || "Something is wrong."})
+        }
+    }
+
+    const resendOTP = async () =>{
+        setCountingBegin(true)
+        
+        try {
+            console.log("Pizza: ",params.username)
+            const username = params.username
+            // send verification email
+            const response = await axios.get<ApiResponse>(`/api/resend-otp/${username}`)
+            console.log(response.data.success)
+            if(response.data.success){
+                toast.success("Send On Your Email.",{description: response.data.message})
+                startCountdown()
+                setTimeout(()=>{
+                    resetCountdown()
+                    setCountingBegin(false)
+                },(sec*10000))
+            }else{
+                toast.warning("Error",{description: response.data.message})
+            }
+            
+        } catch (error) {
+            const axiosError = error as AxiosError<ApiResponse>
+            console.log(axiosError)
+            toast.warning("Error",{description: axiosError.response?.data.message || "Getting error will send Verification code."})
         }
     }
 
@@ -51,7 +93,7 @@ function VerifyAccount() {
                 </div>
 
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 mb-3">
 
                         {/* code */}
                         <FormField control={form.control} name="code" render={({ field }) => (
@@ -68,6 +110,12 @@ function VerifyAccount() {
                         <Button type='submit'>Submit</Button>
                     </form>
                 </Form>
+                <div>
+                    <Button disabled={countingBegin} onClick={resendOTP}>
+                    {!countingBegin?"Resend OTP":<span>{`Resend OTP After: ${count}s`}</span>}
+                    </Button>
+
+                </div>
             </div>
         </div>
     )

@@ -136,7 +136,7 @@ export default function Dashboard() {
         if (!session || !session.user) { return }
         fetchMessages()
         fetchStatusOfAcceptMessage()
-    }, [session, setValue, fetchStatusOfAcceptMessage, fetchMessages])
+    }, [session, fetchMessages, fetchStatusOfAcceptMessage])
 
 
     if (!session || !session.user) {
